@@ -40,11 +40,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'myapi',
     'rest_framework',
-    # 'corsheaders',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
-    # 'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -78,22 +78,22 @@ WSGI_APPLICATION = 'api.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'dotcbcco83j2j',
-#         'USER': 'wqqhubmxfiiqax',
-#         'PASSWORD': '37bdc84ce27fc524673ddc9b52b4ead6c494b3af28ea27b5b34a1ca33f321ef5',
-#         'HOST': 'ec2-3-233-7-12.compute-1.amazonaws.com',
-#         'PORT': '5432',
-#     }
-# }
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'dfiappq9akfj4i',
+        'USER': 'cwsqdgsqfihpxj',
+        'PASSWORD': '3d4341264e862efe4942da33ec307e3097e87028eab621f9444992c115c23d64',
+        'HOST': 'ec2-34-233-114-40.compute-1.amazonaws.com',
+        'PORT': '5432',
     }
 }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 
 # Password validation
