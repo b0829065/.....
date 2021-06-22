@@ -1,51 +1,121 @@
+from django import http
+from django.core import paginator
+from django.core import serializers
+from django.core.serializers import serialize
+from django.db.models.lookups import PostgresOperatorLookup
 from django.shortcuts import render
-from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
+from django.core.serializers.json import DjangoJSONEncoder, Serializer
+from django.http import JsonResponse
+from django.core.paginator import Page, Paginator,EmptyPage,PageNotAnInteger
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from . models import Post
+
+import json
+
+from .models import Post, User_login
+from .models import User
+# Create your views here.
+
+class HelloAPIView(APIView):
+    def get(self,request):
+        get_name = request.GET.get('name',None)
+        # logger.debug("**************** HelloAPIView : "+get_name)
+        retValue = {}
+        if get_name:
+            retValue['data'] = "Hello " + get_name
+            return Response(retValue,status=status.HTTP_200_OK)
+        else:
+            return Response(
+                {"res":"ok"},
+                status=status.HTTP_400_BAD_REQUEST
+                )
+class Add_user(APIView): #註冊
+    def get(self,request):
+        get_id = request.GET.get('user_id','')
+        get_content = request.GET.get('content','')
+        get_Stock_code = request.GET.get('Stock_code','')
+        new_user = User_login()
+        new_user.user_id = get_id
+        new_user.content = get_content
+        new_user.Stock_code = get_Stock_code
+        new_user.save()
+        if get_id:
+            return JsonResponse({'data': get_id + ' insert!'},status=status.HTTP_200_OK)
+        else:
+            return JsonResponse({'res':'parameter : name is None'},status=status.HTTP_400_BAD_REQUEST)
 
 
-from django.http import JsonResponse
-from django.shortcuts import render
+class Delete_user(APIView): #刪除USER /deleteuser
+    def get(self,request):
+        get_id = request.GET.get('user_id','')
+        user = User_login.objects.filter(user_id=get_id)
+        user.delete()
+        if get_id:
+            return JsonResponse({'user ID:':get_id + ' delete!'},status=status.HTTP_200_OK)
+        else:
+            return JsonResponse({'res':'parameter : name is None'},status=status.HTTP_400_BAD_REQUEST)     
 
 
+class Update_user(APIView): #更改帳密 or content/updateuser 
+    def get(self,request):
+        # get_id = request.GET.get('id','')
+        get_userid=request.GET.get('user_id','')
+        get_content = request.GET.get('content','')
+        get_Stock_code = request.GET.get('Stock_code','')
+        change_Stock_code = request.GET.get('changeStock_code','')
+        update_user = User_login.objects.filter(user_id=get_userid,Stock_code=get_Stock_code)
+        update_user.update(content=get_content,Stock_code=change_Stock_code)
+        if get_userid:
+            return JsonResponse({'user ID':get_userid + ' update!'},status=status.HTTP_200_OK)
+        else:
+            return JsonResponse({'res':'parameter : name is None'},status=status.HTTP_400_BAD_REQUEST)
 
-def test_view(request):
-    data = {
-        'name':'pan',
-        'age':23,
-    }
-    return JsonResponse(data)
+class Login(APIView): #更改登入狀態/login
+    def get(self,request):
+        get_userid=request.GET.get('user_id','')
+        get_Stock_code = request.GET.get('Stock_code','')
+        login_check=request.GET.get('login_check','')
+        update_user = User_login.objects.filter(user_id=get_userid,Stock_code=get_Stock_code)
+        update_user.update(login_check=login_check)
+        for e in User_login.objects.all():
+            if(e.user_id==get_userid):
+                nickname=e.nickname
+        for i in User_login.objects.all():
+            if(i.user_id==get_userid):
+                id=i.id
+        if update_user:
+            if login_check==False:
+                return JsonResponse({'User':get_userid + ' 已成功登出'},status=status.HTTP_200_OK)
+            else: 
+                return JsonResponse({'id':id ,'User':get_userid + '已成功登入','nickname':nickname},status=status.HTTP_200_OK)
+        else:
+            return JsonResponse({'res':'parameter : name is None'},status=status.HTTP_400_BAD_REQUEST)
 
-def TW2330(request):
-    data = {
-        'name':"台積電",
-        'detail':"台積電成立於1987年2月21日，是全球第一家也是全球最大的專業積體電路(IC)製造服務公司",
-    }
-    return JsonResponse(data)
 
-def TW2454(request):
-    data = {
-        'name':"聯發科",
-        'detail':"聯發科技股份有限公司(2454.TW)成立於1997年5月28日，早期為聯電集團轉投資之半導體晶片設計公司，是無線通訊及數位媒體晶片整合系統方案之主要供應商，排名全球前十大半導體晶片廠",
-    }
-    return JsonResponse(data)
+class List_post(APIView):
+    def get(self,request):
+        page = request.GET.get('page',1) #  browsing page i
+        posts = Post.objects.all().values()
 
-def TW2303(request):
-    data = {
-        'name':"聯電",
-        'detail':
-            "聯電成立於1980年五月二十二日，為國內第一家上市的半導體公司，台灣僅次於台積電之晶圓專業代工公司。"
-            "公司發展策略不同於台積電，以晶圓製造服務為後盾，轉投資諸多半導體晶片設計公司，以自有產能及技術扶植半導體晶片設計公司，而當半導體晶片設計公司之產品在市場中具競爭優勢取得需求量時，亦回饋公司，得以維持晶圓代工產能利用率，兩者相輔相成。",
-    }
-    return JsonResponse(data)
+        paginator = Paginator(posts,10) #10 data for one page
+        try:
+            posts = paginator.page(page)
+        except PageNotAnInteger:
+            posts = paginator.page(1)
+        except EmptyPage:
+            posts = paginator.page(paginator.num_pages)
 
-def TW2881(request):
-    data = {
-        'name':"富邦金",
-        'detail':
-            "富邦金(2881)成立於1961年，前身為富邦保險，2001年富邦金以股權讓與方式納入富邦產物保險股份有限公司，並以股權轉換方式併入富邦綜合證券股份有限公司、富邦商業銀行股份有限公司、及富邦人壽保險股份有限公司。同年年底富邦金控掛牌上市，為台灣第一家上市的金融控股公司。"
-    }
-    return JsonResponse(data)
+        return JsonResponse(
+            # {'data':json.dumps(list(posts),sort_keys=True,indent=1,cls=DjangoJSONEncoder)},
+            {'data':list(posts)},
+            status=status.HTTP_200_OK
+        )
+class List_User(APIView):
+    def get(self,request):
+        user = User_login.objects.all().values()
+        return JsonResponse(
+            {'data':list(user)},
+            status=status.HTTP_200_OK
+        )

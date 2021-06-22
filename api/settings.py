@@ -25,7 +25,8 @@ SECRET_KEY = 'django-insecure-gb0tsl940hp)40wnpw-gjs73(2bwunlvt$3w1=73c)87=&-%ze
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1','api87.herokuapp.com']
+# ALLOWED_HOSTS = ['127.0.0.1','api87.herokuapp.com']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,11 +38,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',
     'myapi',
+    'rest_framework',
+    # 'corsheaders',
 ]
 
 MIDDLEWARE = [
+    # 'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -52,7 +55,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'api.urls'
-
+CORS_ORIGIN_ALLOW_ALL = True
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -75,6 +78,16 @@ WSGI_APPLICATION = 'api.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'dotcbcco83j2j',
+#         'USER': 'wqqhubmxfiiqax',
+#         'PASSWORD': '37bdc84ce27fc524673ddc9b52b4ead6c494b3af28ea27b5b34a1ca33f321ef5',
+#         'HOST': 'ec2-3-233-7-12.compute-1.amazonaws.com',
+#         'PORT': '5432',
+#     }
+# }
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -122,11 +135,13 @@ USE_TZ = True
 STATIC_ROOT =os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
 
 LOGGING = {
  'version': 1,
