@@ -62,11 +62,11 @@ class Update_user(APIView): #更改帳密 or content/updateuser
     def get(self,request):
         # get_id = request.GET.get('id','')
         get_userid=request.GET.get('user_id','')
-        get_content = request.GET.get('content','')
-        get_Stock_code = request.GET.get('Stock_code','')
-        change_Stock_code = request.GET.get('changeStock_code','')
-        update_user = User_login.objects.filter(user_id=get_userid,Stock_code=get_Stock_code)
-        update_user.update(content=get_content,Stock_code=change_Stock_code)
+        get_nickname = request.GET.get('nickname','')
+        get_password = request.GET.get('password','')
+        change_password = request.GET.get('changepassword','')
+        update_user = User_login.objects.filter(user_id=get_userid,password=get_password)
+        update_user.update(nickname=get_nickname,password=change_password)
         if get_userid:
             return JsonResponse({'user ID':get_userid + ' update!'},status=status.HTTP_200_OK)
         else:
@@ -75,9 +75,9 @@ class Update_user(APIView): #更改帳密 or content/updateuser
 class Login(APIView): #更改登入狀態/login
     def get(self,request):
         get_userid=request.GET.get('user_id','')
-        get_Stock_code = request.GET.get('Stock_code','')
+        get_password = request.GET.get('password','')
         login_check=request.GET.get('login_check','')
-        update_user = User_login.objects.filter(user_id=get_userid,Stock_code=get_Stock_code)
+        update_user = User_login.objects.filter(user_id=get_userid,password=get_password)
         update_user.update(login_check=login_check)
         for e in User_login.objects.all():
             if(e.user_id==get_userid):

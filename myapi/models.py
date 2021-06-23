@@ -10,10 +10,10 @@ class Post(models.Model):
 
 class User(models.Model):
     user_id=models.CharField(max_length=45)
-    content = models.CharField(max_length=50)
-    Stock_code =models.CharField(max_length=20)
+    Stock_code = models.CharField(max_length=50)
+    content =models.CharField(max_length=20)
 
 class User_login(models.Model): #登入與註冊
     user_id=models.CharField(max_length=45)
-    Stock_code =models.CharField(max_length=20)
-    content = models.CharField(max_length=50)
+    content =models.CharField(max_length=20)
+    Stock_code = models.CharField(max_length=50)
